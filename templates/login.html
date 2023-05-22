@@ -7,7 +7,7 @@
     <title>Document</title>
 </head>
 <body>
-    <form method="POST" action="/">
+    <form method="POST" action="{{url_for('login')}}">
         {{ form.csrf_token }}
         {{ form.email.label }}  {{ form.email }}
         {{ form.username.label }} {{ form.username }}

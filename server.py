@@ -43,6 +43,26 @@ def add_user():
 
     return url_for('home')
 
+@app.route('/login', methods=['POST','GET'])
+def login():
+    login_form = LoginForm()
+
+    if login_form.validate_on_submit():
+
+        email = login_form.email.data
+        username = login_form.username.data
+        password = login_form.password.data
+        
+        user = User.query.filter_by(email=email).first()
+        if not user or user.password != password:
+            return print('The credentials youve entered are incorrect, please try again.')
+        
+        session['username'] = user.username
+
+    return url_for('home')
+
+
+# @app.route('/add-post')
 
 
 
