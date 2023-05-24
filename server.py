@@ -1,6 +1,6 @@
 from flask import Flask, render_template,request,flash,session,redirect,url_for
 
-from model import db, connect_to_db, User
+from model import db, connect_to_db, User, Post
 
 from forms import LoginForm, PostForm, NewUserForm
 
@@ -57,12 +57,38 @@ def login():
         if not user or user.password != password:
             return print('The credentials youve entered are incorrect, please try again.')
         
-        session['username'] = user.username
+        session['email'] = user.email
 
-    return url_for('home')
+    return redirect(url_for('user'))
 
 
-# @app.route('/add-post')
+@app.route('/user')
+def user():
+    user = User.query.filter_by(email = session["email"]).first()
+    return render_template('user.html', user = user)
+
+@app.route('/blog')
+def blog():
+    user = User.query.filter_by(email = session["email"]).first()
+    return render_template('blog.html', user = user)
+
+@app.route('/new_post', methods=['POST'])
+def new_post():
+    post_form = PostForm()
+
+    user = User.query.filter_by(email = session["email"]).first()
+
+    if post_form.validate_on_submit():
+
+        header = post_form.header.data
+        body = post_form.body.data
+
+        post = Post(user.id, header, body)
+
+        db.session.add(post)
+        db.session.commit()
+    
+    return redirect(url_for('home'))
 
 
 

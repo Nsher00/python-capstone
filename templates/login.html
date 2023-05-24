@@ -15,11 +15,15 @@
         <input type="submit" value="Login">
     </form>
     
-    <form method="POST" action="/">
+    <form method="POST" action="{{url_for('new_post')}}">
         {{ post_form.csrf_token }}
         {{ post_form.header.label }}  {{ post_form.header }}
         {{ post_form.body.label }} {{ post_form.body }}
         <input type="submit" value="Post">
     </form>
+
+    <a href="{{url_for('blog')}}">
+        <button>Blog</button>
+    </a>
 </body>
 </html>
