@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+{% extends 'base.html' %}
+<body>
+    {% block body %}
+        {% if current_user.is_authenticated %}
+            <br>
+            <h2>Welcome, {{ current_user.username }}!</h2>
+            <br>
+        {% endif %}
+        <form method="POST" action="{{url_for('new_post')}}">
+            {{ post_form.csrf_token }}
+            <div class="mb-3">
+                <div for="exampleFormControlInput1" class="form-label">{{ post_form.header.label }}</div>
+                {{ post_form.header(class='form-control w-25', id="exampleFormControlInput1") }}
+            </div>
+            <div class="mb-3">
+                <div for="exampleFormControlInput1" class="form-label">{{ post_form.body.label }}</div>
+                {{ post_form.body(class='form-control', id="exampleFormControlTextarea1", rows="3") }}
+            </div>
+            <input type="submit" value="Post" class="btn btn-success">
+        </form>
+    {% endblock %}
+</body>
+</html>

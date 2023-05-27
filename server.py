@@ -6,6 +6,8 @@ from forms import LoginForm, PostForm, NewUserForm
 
 from jinja2 import StrictUndefined
 
+from flask_login import UserMixin, login_user, logout_user, LoginManager, login_required, current_user
+
 app = Flask(__name__)
 app.secret_key = 'superdupersecret'
 app.jinja_env.undefined = StrictUndefined
@@ -41,7 +43,16 @@ def add_user():
         else:
             print('The passwords didnt match')
 
-    return url_for('home')
+    return redirect(url_for('home'))
+
+#Login manager
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 @app.route('/login', methods=['POST','GET'])
 def login():
@@ -55,28 +66,38 @@ def login():
         
         user = User.query.filter_by(email=email).first()
         if not user or user.password != password:
-            return print('The credentials youve entered are incorrect, please try again.')
+            return flash('The credentials youve entered are incorrect, please try again.')
         
-        session['email'] = user.email
+        else:
+            flash('Login Successful!')
+            login_user(user)
+            return redirect(url_for('home'))
 
-    return redirect(url_for('user'))
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
 
 
-@app.route('/user')
-def user():
-    user = User.query.filter_by(email = session["email"]).first()
-    return render_template('user.html', user = user)
+@app.route('/landing')
+@login_required
+def landing():
+    # user = User.query.filter_by(email = session["email"]).first()
+    post_form = PostForm()
+    return render_template('landing.html', post_form = post_form)
 
 @app.route('/blog')
+@login_required
 def blog():
-    user = User.query.filter_by(email = session["email"]).first()
+    user = User.query.filter_by(email = current_user.email).first()
     return render_template('blog.html', user = user)
 
 @app.route('/new_post', methods=['POST'])
 def new_post():
     post_form = PostForm()
 
-    user = User.query.filter_by(email = session["email"]).first()
+    user = User.query.filter_by(email = current_user.email).first()
 
     if post_form.validate_on_submit():
 
@@ -90,6 +111,15 @@ def new_post():
     
     return redirect(url_for('home'))
 
+# @app.route('/delete_post', methods=['POST'])
+# def delete_post():
+#     db.session.delete()
+    
+
+# @app.route('/liked', methods=['POST'])
+# def liked():
+    
+    
 
 
 if __name__ == "__main__":

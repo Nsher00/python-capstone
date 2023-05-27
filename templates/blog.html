@@ -7,12 +7,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+{% extends 'base.html' %}
 <body>
-    {% for post in user.posts %}
-        <div>
-            <h3>{{post.header}}</h3>
-            <p>{{post.body}}</p>
-        </div>
-    {% endfor %}
+    {% block body %}
+        {% for post in user.posts %}
+            <div class="card" style="width: 50%;">
+                <h5 class="card-header">{{post.header}}</h5>
+                <button class=""></button>
+                <br>
+                <div>Author: {{user.username}}</div>
+                <br>
+                <p class="card-text">{{post.body}}</p>
+            </div>
+        {% endfor %}
+    {% endblock %}
 </body>
 </html>

@@ -7,13 +7,15 @@
     <title>Document</title>
 </head>
 <body>
-    <form method="POST" action="{{url_for('add_user')}}">
-        {{ add_form.csrf_token }}
-        {{ add_form.email.label }}  {{ add_form.email }}
-        {{ add_form.username.label }} {{ add_form.username }}
-        {{ add_form.password.label }} {{ add_form.password }}
-        {{ add_form.repassword.label }}  {{ add_form.repassword }}
-        <input type="submit" value="Create">
-    </form>
+    {% block body %}
+        <form method="POST" action="{{url_for('add_user')}}">
+            {{ add_form.csrf_token }}
+            {{ add_form.email.label }}  {{ add_form.email }}
+            {{ add_form.username.label }} {{ add_form.username }}
+            {{ add_form.password.label }} {{ add_form.password }}
+            {{ add_form.repassword.label }}  {{ add_form.repassword }}
+            <input type="submit" value="Create">
+        </form>
+    {% endblock %}
 </body>
 </html>
