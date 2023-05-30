@@ -11,13 +11,16 @@
 <body>
     {% block body %}
         {% for post in user.posts %}
-            <div class="card" style="width: 50%;">
+            <div class="card">
                 <h5 class="card-header">{{post.header}}</h5>
                 <button class=""></button>
                 <br>
                 <div>Author: {{user.username}}</div>
                 <br>
                 <p class="card-text">{{post.body}}</p>
+                {% if current_user.id == post.user_id %}
+                    <button>Delete</button>
+                {% endif %}
             </div>
         {% endfor %}
     {% endblock %}

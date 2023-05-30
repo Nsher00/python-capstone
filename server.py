@@ -1,8 +1,8 @@
 from flask import Flask, render_template,request,flash,session,redirect,url_for
 
-from model import db, connect_to_db, User, Post
+from model import db, connect_to_db, User, Post, Like, Dislike, Comment
 
-from forms import LoginForm, PostForm, NewUserForm
+from forms import LoginForm, PostForm, NewUserForm, CommentForm
 
 from jinja2 import StrictUndefined
 
@@ -93,7 +93,7 @@ def blog():
     user = User.query.filter_by(email = current_user.email).first()
     return render_template('blog.html', user = user)
 
-@app.route('/new_post', methods=['POST'])
+@app.route('/new-post', methods=['POST'])
 def new_post():
     post_form = PostForm()
 
@@ -111,13 +111,78 @@ def new_post():
     
     return redirect(url_for('home'))
 
-# @app.route('/delete_post', methods=['POST'])
-# def delete_post():
-#     db.session.delete()
+@app.route('/delete-post/<post_id>', methods=['GET'])
+def delete_post(post_id):
+    post = Post.query.filter_by(id = post_id).first()
+
+    if not post:
+        flash('The post does not exsist', category='error')
+    else:
+        db.session.delete(post)
+        db.session.commit()
+    return redirect(url_for('all_posts'))
+
+
+@app.route('/all-posts')
+def all_posts():
+    posts = Post.query.all()
+    form = CommentForm()
+    comments = Comment.query.all()
+    return render_template('all_posts.html', posts = posts, comments = comments, form = form)
     
 
-# @app.route('/liked', methods=['POST'])
-# def liked():
+@app.route('/liked/<post_id>', methods=['GET'])
+def liked(post_id):
+    post = Post.query.filter_by(id = post_id)
+    like = Like.query.filter_by(user_id = current_user.id, post_id = post_id).first()
+
+    if not post:
+        flash('The post does not exsist', category='error')
+    elif like:
+        db.session.delete(like)
+        db.session.commit()
+    else:
+        like = Like(user_id = current_user.id, post_id =post_id)
+        db.session.add(like)
+        db.session.commit()
+
+    return redirect(url_for('all_posts'))
+
+@app.route('/disliked/<post_id>', methods=['GET'])
+def disliked(post_id):
+    post = Post.query.filter_by(id = post_id)
+    dislike = Dislike.query.filter_by(user_id = current_user.id, post_id = post_id).first()
+
+    if not post:
+        flash('The post does not exsist', category='error')
+    elif dislike:
+        db.session.delete(dislike)
+        db.session.commit()
+    else:
+        dislike = Dislike(user_id = current_user.id, post_id =post_id)
+        db.session.add(dislike)
+        db.session.commit()
+
+    return redirect(url_for('all_posts'))
+
+@app.route('/comment/<post_id>', methods=['POST', 'GET'])
+def comment(post_id):
+    form = CommentForm()
+    post = Post.query.filter_by(id = post_id)
+    comment = Comment.query.filter_by(user_id = current_user.id, post_id = post_id).first()
+
+    if form.validate_on_submit():
+
+        if not post:
+            flash('The post does not exsist', category='error')
+        else:
+            comment = Comment(user_id = current_user.id, post_id = post_id, comment_text = form.text.data)
+            db.session.add(comment)
+            db.session.commit()
+    else:
+        flash('There was a problem submitting your comment. Please try again...', category='error')
+
+    return redirect(url_for('all_posts'))
     
     
 

@@ -17,11 +17,15 @@
         <form method="POST" action="{{url_for('new_post')}}">
             {{ post_form.csrf_token }}
             <div class="mb-3">
-                <div for="exampleFormControlInput1" class="form-label">{{ post_form.header.label }}</div>
-                {{ post_form.header(class='form-control w-25', id="exampleFormControlInput1") }}
+                <div for="exampleFormControlInput1" class="form-label">
+                    <h4>Header</h4>
+                </div>
+                {{ post_form.header(class='form-control w-75', id="exampleFormControlInput1") }}
             </div>
             <div class="mb-3">
-                <div for="exampleFormControlInput1" class="form-label">{{ post_form.body.label }}</div>
+                <div for="exampleFormControlInput1" class="form-label">
+                    <h4>Body</h4>
+                </div>
                 {{ post_form.body(class='form-control', id="exampleFormControlTextarea1", rows="3") }}
             </div>
             <input type="submit" value="Post" class="btn btn-success">

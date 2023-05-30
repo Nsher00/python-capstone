@@ -15,6 +15,7 @@ class User(db.Model, UserMixin):
 
     posts = db.relationship("Post", backref="user", lazy=False)
     likes = db.relationship("Like", backref="user", lazy=False)
+    dislikes = db.relationship("Dislike", backref="user", lazy=False)
     comments = db.relationship("Comment", backref="user", lazy=False)
 
     def __init__(self,email,username,password):
@@ -47,12 +48,10 @@ class Like(db.Model):
     id = db.Column(db.Integer, primary_key=True,autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     post_id = db.Column(db.Integer, db.ForeignKey("posts.id"))
-    is_liked = db.Column(db.Boolean)
 
-    def __init__(self,user_id,post_id,is_liked,is_disliked):
+    def __init__(self,user_id,post_id):
         self.user_id = user_id
         self.post_id = post_id
-        self.is_liked = is_liked
 
 class Dislike(db.Model):
 
@@ -61,12 +60,10 @@ class Dislike(db.Model):
     id = db.Column(db.Integer, primary_key=True,autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     post_id = db.Column(db.Integer, db.ForeignKey("posts.id"))
-    is_disliked = db.Column(db.Boolean)
 
-    def __init__(self,user_id,post_id,is_liked,is_disliked):
+    def __init__(self,user_id,post_id):
         self.user_id = user_id
         self.post_id = post_id
-        self.is_disliked = is_disliked
 
 class Comment(db.Model):
 

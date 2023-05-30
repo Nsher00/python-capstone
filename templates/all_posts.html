@@ -1,1 +1,51 @@
- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+{% extends 'base.html' %}
+<body>
+    {% block body %}
+        {% for post in posts %}
+            <br>
+            <div class="card">
+                <div class="card-header">
+                    <h5 >{{post.header}}</h5>
+                    <a href="/liked/{{post.id}}" class="btn btn-primary">Likes: {{post.likes|length}}</a>
+                    <a href="/disliked/{{post.id}}" class="btn btn-primary">Dislikes: {{post.dislikes|length}}</a>
+                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#{{post.id}}" aria-expanded="false" aria-controls="collapseExample">Comments</button>
+                    {% if current_user.id == post.user_id %}
+                        <a href="/delete-post/{{post.id}}" class="btn btn-danger">Delete</a>
+                    {% endif %}
+                </div>
+                <div style="padding: 12px;">
+                    <br>
+                    <p class="card-text">{{post.body}}</p>
+                    <br>
+                </div>
+                <div class="collapse" id="{{post.id}}">
+                    <div class="card card-body">
+                        {% for comment in post.comments %}
+                            <div class="card">
+                                <div class="card-header">{{comment.user_id}}</div>
+                                <p class="card-text" style="padding: 5px;">{{comment.comment_text}}</p>
+                            </div>
+                            <br>
+                        {% endfor %}
+                        <h5>Comment:</h5>
+                        <form method="POST" action="{{url_for('comment', post_id = post.id)}}">
+                            {{ form.csrf_token }}
+                            {{form.text(class='form-control', id="exampleFormControlTextarea1", rows="3")}}
+                            <br>
+                            {{form.submit(class="btn btn-primary")}}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endblock %}
+</body>
+</html>
